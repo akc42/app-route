@@ -305,7 +305,8 @@ the `app-route` will update `route.path`. This in-turn will update the
         }
         if (!this.tail ||
             this.tail.prefix !== tailPrefix ||
-            this.tail.path !== tailPath) {
+            this.tail.path !== tailPath ||
+            this.tail.active !== this.active) {
           propertyUpdates.tail = {
             prefix: tailPrefix,
             path: tailPath,
@@ -328,7 +329,7 @@ the `app-route` will update `route.path`. This in-turn will update the
        * @export
        */
       __tailPathChanged: function() {
-        if (!this.route || !this.route.active) {
+        if (!this.active) {
           return;
         }
         var tailPath = this.tail.path;
@@ -346,7 +347,7 @@ the `app-route` will update `route.path`. This in-turn will update the
        * @export
        */
       __updatePathOnDataChange: function(data) {
-        if (!this.route || !this.route.active) {
+        if (!this.active) {
           return;
         }
         var newPath = this.__getLink({});
@@ -385,6 +386,8 @@ the `app-route` will update `route.path`. This in-turn will update the
       __parentActiveChanged: function(active) {
         if (!active) {
           this.__resetProperties();
+        } else {
+          this.__tryToMatch();
         }
       },
 
