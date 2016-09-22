@@ -409,7 +409,7 @@ the `app-route` will update `route.path`. This in-turn will update the
 
         for (var property in setObj) {
           this._pathEffector(property, this[property]);
-          this._notifyPathUp(property, this[property]);
+          this._notifyChange(property);
         }
       }
     });
