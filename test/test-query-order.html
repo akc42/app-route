@@ -1,0 +1,65 @@
+<!doctype html>
+
+<html>
+<head>
+  <title>app-route Optional Parameters Test</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="app-example-2.html">
+
+</head>
+<body>
+
+  <test-fixture id="query-check">
+    <template>
+      <app-example-2></app-example-2>
+    </template>
+  </test-fixture>
+  <script>
+  'use strict';
+    function generateUri(path, params) {
+      var str = [];
+      if (params) {
+        for (var param in params) {
+          if (params.hasOwnProperty(param)) {
+            str.push(encodeURIComponent(param) + '=' + encodeURIComponent(params[param]));
+          }
+        }
+        return path + '?' + str.join('&');
+      }
+      return path;
+    };
+
+    function setLocation(path,params) {
+      window.history.pushState({}, null, generateUri(path, params));
+      window.dispatchEvent(new CustomEvent('location-changed'));
+    };
+
+
+    suite('query params ordering', function(){
+      this.timeout(0); //tmp
+      var originalLocation;
+      var sandbox, el;
+      setup(function(){
+        originalLocation = window.location.href;
+        sandbox = sinon.sandbox.create();
+        el = fixture('query-check');
+     });
+      teardown(function(){
+        sandbox.restore();
+        window.history.pushState({}, '', originalLocation);
+      });
+
+      test('expect query parameters included when route change', function() {
+        setLocation('/user/0');
+        setLocation('/user/-1', {firstname: 'Joe', lastname: 'Bloggs'});
+        expect(el.echo).to.deep.equal({firstname: 'Joe', lastname: 'Bloggs'});
+
+      });
+    });
+  </script>
+</body>
+
